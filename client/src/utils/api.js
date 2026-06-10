@@ -1,18 +1,17 @@
 import axios from 'axios';
 
-// In production (Vercel), VITE_API_URL is set to the Render backend URL.
-// In development, Vite proxy handles /api → localhost:5000 automatically.
-const baseURL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : '/api';
+// Production: use Render backend directly
+// Development: Vite proxy handles /api → localhost:5000
+const RENDER_URL = 'https://halfrobo-api.onrender.com';
+
+const isProduction = import.meta.env.PROD;
 
 const api = axios.create({
-  baseURL,
+  baseURL: isProduction ? `${RENDER_URL}/api` : '/api',
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 });
 
-// Attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('halfrobo_token');
@@ -22,7 +21,6 @@ api.interceptors.request.use(
   (err) => Promise.reject(err)
 );
 
-// Handle 401 globally
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -33,8 +31,7 @@ api.interceptors.response.use(
         localStorage.removeItem('halfrobo_token');
         localStorage.removeItem('halfrobo_user');
         const dest = window.location.pathname.startsWith('/admin')
-          ? '/admin/login'
-          : '/login';
+          ? '/admin/login' : '/login';
         window.location.href = dest;
       }
     }
