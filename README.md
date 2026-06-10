@@ -1,127 +1,117 @@
-# 🤖 HalfRobo E-Commerce Platform — Setup Guide
+# 🤖 HalfRobo — AI Robotics & IoT E-Commerce Platform
 
-## Prerequisites
+![HalfRobo Banner](client/src/assets/hero.png)
 
-Before running HalfRobo, install these:
-
-1. **Node.js 18+** — https://nodejs.org
-2. **PostgreSQL 15+** — https://www.postgresql.org/download/windows/
+> A full-stack futuristic e-commerce platform for AI robots, drones, IoT devices and smart home products — built with React, Node.js, and PostgreSQL.
 
 ---
 
-## Step 1 — Install PostgreSQL
+## ✨ Features
 
-1. Download from: https://www.postgresql.org/download/windows/
-2. During install:
-   - Set password: `postgres` (or change it in `.env`)
-   - Default port: `5432`
-   - Keep pgAdmin checked ✅
+### 🛍️ Customer Side
+- 🔐 User authentication (Register / Login / JWT)
+- 🏠 Dynamic homepage with featured products & hero section
+- 🛒 Shopping cart with save-for-later & coupon codes
+- ❤️ Wishlist management
+- 📦 Order placement, tracking & order history
+- 🔍 Product search with filters, sorting & pagination
+- 💬 Product reviews & ratings
+- 👤 User dashboard & profile management
 
----
-
-## Step 2 — Create the Database
-
-Open **pgAdmin** or **psql** and run:
-```sql
-CREATE DATABASE halfrobo;
-```
-
-Or via command line:
-```powershell
-& "C:\Program Files\PostgreSQL\15\bin\psql.exe" -U postgres -c "CREATE DATABASE halfrobo;"
-```
-
----
-
-## Step 3 — Configure Environment
-
-Edit `server/.env` to match your PostgreSQL password:
-```
-PORT=5000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/halfrobo
-JWT_SECRET=halfrobo_jwt_secret_2024_ultra_secure_key
-JWT_EXPIRES_IN=7d
-```
-> Change `postgres:postgres` to `postgres:YOUR_PASSWORD` if you used a different password.
+### ⚙️ Admin Panel
+- 📊 Analytics dashboard with revenue charts & stats
+- 📦 Full product management (add/edit/delete + image upload)
+- 🗂️ Category management
+- 🧾 Order management with status updates
+- 👥 User management (block/unblock/delete)
+- 🏷️ Coupon management (create, edit, activate)
+- 📋 Review moderation
+- 📦 Inventory & stock tracking
+- ⚙️ Site settings — footer, contact, social links
+- 🗺️ Live shop location map (admin-controlled)
 
 ---
 
-## Step 4 — Install Dependencies
+## 🛠️ Tech Stack
 
-```powershell
-# Install server dependencies
-cd server
-npm install
-
-# Install client dependencies
-cd ../client
-npm install
-```
-
----
-
-## Step 5 — Seed the Database
-
-```powershell
-cd server
-npm run seed
-```
-
-This creates:
-- ✅ All database tables
-- 👤 Admin: `admin@halfrobo.com` / `admin123`
-- 👤 Demo user: `demo@halfrobo.com` / `demo123`
-- 📦 16 products across 8 categories
-- 🎟️ 3 coupon codes: `WELCOME10`, `ROBO20`, `HALFROBO50`
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, Vite, React Router v6 |
+| **Styling** | Vanilla CSS, Glassmorphism, Neon effects |
+| **Animations** | Framer Motion |
+| **Charts** | Recharts |
+| **Backend** | Node.js, Express.js (ES Modules) |
+| **Database** | PostgreSQL (Neon cloud) / SQLite (local) |
+| **Auth** | JWT + bcryptjs |
+| **File Upload** | Multer + Sharp |
+| **Fonts** | Orbitron + Inter (Google Fonts) |
 
 ---
 
-## Step 6 — Run the Platform
+## 🚀 Quick Start (Local)
 
-**Option A — Use the root convenience script:**
-```powershell
+### Prerequisites
+- Node.js 18+
+- npm
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/yourname/halfrobo.git
 cd halfrobo
+```
+
+### 2. Install dependencies
+```bash
+# Backend
+cd server && npm install
+
+# Frontend
+cd ../client && npm install
+```
+
+### 3. Setup environment
+```bash
+cd server
+cp .env.example .env
+# Edit .env and add your database URL
+```
+
+### 4. Start both servers
+
+**Terminal 1 — Backend:**
+```bash
+cd server
+node server.js
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd client
 npm run dev
 ```
 
-**Option B — Run separately:**
-```powershell
-# Terminal 1 — Backend
-cd server && npm start
-
-# Terminal 2 — Frontend
-cd client && npm run dev
-```
+### 5. Open in browser
+- 🌐 **Store:** http://localhost:5173
+- 👑 **Admin:** http://localhost:5173/admin/login
 
 ---
 
-## 🌐 Access the Platform
+## 🔑 Default Login Credentials
 
-| URL | Description |
-|-----|-------------|
-| http://localhost:5173 | 🛍️ User Store |
-| http://localhost:5173/admin | ⚙️ Admin Panel |
-| http://localhost:5173/admin/login | 🔐 Admin Login |
-| http://localhost:5000/api/health | 💚 API Health Check |
+| Role | Email | Password |
+|------|-------|----------|
+| **Admin** | admin@halfrobo.com | admin123 |
+| **User** | demo@halfrobo.com | demo123 |
 
 ---
 
-## 🔑 Default Credentials
+## 🌐 Deployment
 
-| Account | Email | Password |
-|---------|-------|----------|
-| Admin | admin@halfrobo.com | admin123 |
-| Demo User | demo@halfrobo.com | demo123 |
-
----
-
-## 🎟️ Coupon Codes
-
-| Code | Discount |
-|------|----------|
-| `WELCOME10` | 10% off (min ₹100) |
-| `ROBO20` | 20% off (min ₹500) |
-| `HALFROBO50` | ₹50 flat off (min ₹200) |
+| Service | Purpose |
+|---------|---------|
+| [Vercel](https://vercel.com) | Frontend hosting (free) |
+| [Render](https://render.com) | Backend API hosting (free) |
+| [Neon](https://neon.tech) | PostgreSQL database (free) |
 
 ---
 
@@ -129,48 +119,36 @@ cd client && npm run dev
 
 ```
 halfrobo/
-├── client/          # React + Vite frontend
+├── client/                  # React Frontend (Vite)
 │   └── src/
 │       ├── pages/
-│       │   ├── user/    # User-facing pages
-│       │   └── admin/   # Admin panel pages
-│       ├── components/  # Reusable UI components
-│       ├── context/     # AuthContext, CartContext
-│       └── layouts/     # UserLayout, AdminLayout
-├── server/          # Node.js + Express backend
-│   ├── routes/      # API route handlers
-│   ├── middleware/  # Auth + upload middleware
-│   └── config/      # Database connection
-└── package.json     # Root convenience scripts
+│       │   ├── user/        # Home, Products, Cart, Orders...
+│       │   └── admin/       # Dashboard, Products, Orders...
+│       ├── components/      # Navbar, Footer, ProductCard, Cart
+│       ├── context/         # AuthContext, CartContext
+│       └── utils/           # api.js (Axios instance)
+│
+└── server/                  # Node.js + Express Backend
+    ├── config/              # database.js
+    ├── middleware/          # auth.js, upload.js
+    ├── routes/              # auth, products, cart, orders, admin...
+    └── seed.js              # Database seeder
 ```
 
 ---
 
-## 🚀 Features
+## 📸 Screenshots
 
-### User Store
-- 🏠 Futuristic animated homepage
-- 🛍️ Products with filters, search, sort, pagination
-- 🤖 Detailed product pages with specs & reviews
-- 🛒 Full shopping cart with save-for-later
-- 💳 3-step checkout (Shipping → Payment → Review)
-- ✅ Order confirmation with animation
-- 👤 User dashboard with order history
-- ℹ️ About & Contact pages
+> Futuristic dark UI with glassmorphism, neon glow effects, and smooth animations.
 
-### Admin Panel
-- 📊 Analytics dashboard with charts
-- 📦 Product management (add/edit/delete + image upload)
-- 📋 Order management with status tracking
-- 👥 User management (block/unblock)
-- 🏷️ Category management
-- ⭐ Review moderation (approve/reject)
-- 📉 Inventory management with stock alerts
-- ⚙️ Settings + coupon management
+---
 
-### Tech Stack
-- **Frontend**: React 19, Vite, Framer Motion, Recharts
-- **Backend**: Node.js, Express (ES Modules)
-- **Database**: PostgreSQL
-- **Auth**: JWT + bcryptjs
-- **Images**: Multer + Sharp (auto-resize to WebP)
+## 📄 License
+
+MIT License — feel free to use and modify.
+
+---
+
+<p align="center">
+  Built with ❤️ by <strong>Priyanshu Suman</strong> | Powered by AI & Robotics 🤖
+</p>
