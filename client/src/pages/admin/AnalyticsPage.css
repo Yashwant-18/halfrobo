@@ -1,0 +1,4 @@
+.analytics-card { border-radius: 16px; padding: 24px; }
+.analytics-card__title { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-bottom: 20px; color: white; }
+.analytics-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 800px) { .analytics-grid2 { grid-template-columns: 1fr; } }

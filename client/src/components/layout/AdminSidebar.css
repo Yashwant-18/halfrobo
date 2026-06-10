@@ -1,0 +1,174 @@
+.admin-sidebar {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: rgba(12, 12, 22, 0.98);
+  border-right: 1px solid rgba(0, 217, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.admin-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.admin-sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.admin-sidebar__logo-icon {
+  font-size: 1.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 6px rgba(0,217,255,0.4));
+  flex-shrink: 0;
+}
+.admin-sidebar__logo-text {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.04em;
+}
+.admin-sidebar__collapse {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.admin-sidebar__collapse:hover { color: var(--neon-blue); border-color: rgba(0,217,255,0.3); }
+
+.admin-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.admin-sidebar__avatar {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--gradient-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.admin-sidebar__user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-sidebar__user-role {
+  font-size: 0.72rem;
+  color: var(--neon-blue);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-sidebar__section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 16px 20px 8px;
+}
+
+.admin-sidebar__nav {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.admin-sidebar__nav::-webkit-scrollbar { display: none; }
+
+.admin-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  width: 100%;
+  white-space: nowrap;
+  position: relative;
+}
+.admin-sidebar__link:hover {
+  background: var(--glass-hover);
+  color: white;
+}
+.admin-sidebar__link--active {
+  background: rgba(0, 217, 255, 0.1);
+  color: var(--neon-blue);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+}
+.admin-sidebar__link--active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 25%; bottom: 25%;
+  width: 3px;
+  background: var(--neon-blue);
+  border-radius: 0 3px 3px 0;
+  box-shadow: var(--glow-blue-sm);
+}
+.admin-sidebar__link--icon-only {
+  justify-content: center;
+  padding: 12px;
+}
+.admin-sidebar__link--danger { color: var(--text-muted); }
+.admin-sidebar__link--danger:hover { color: var(--neon-pink); background: rgba(255,45,120,0.08); }
+
+.admin-sidebar__link-icon { flex-shrink: 0; }
+.admin-sidebar__link-arrow {
+  margin-left: auto;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.admin-sidebar__link:hover .admin-sidebar__link-arrow,
+.admin-sidebar__link--active .admin-sidebar__link-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.admin-sidebar__footer {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-sidebar__divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin-bottom: 6px;
+}

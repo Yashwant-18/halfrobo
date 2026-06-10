@@ -1,0 +1,30 @@
+# ─── Dependencies ─────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ─── Environment ──────────────────────────────────────────────
+.env
+*.env.local
+
+# ─── Build output ─────────────────────────────────────────────
+dist/
+build/
+.next/
+
+# ─── Database (local only) ────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Uploads (local only, use cloud storage in prod) ──────────
+server/uploads/
+
+# ─── OS files ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Editor ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,18 @@
+.confirm-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; position: relative; overflow: hidden; }
+.confirm-page__bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0,255,148,0.08) 0%, rgba(0,217,255,0.06) 40%, transparent 70%); pointer-events: none; }
+.confirm-page__inner { position: relative; z-index: 1; text-align: center; max-width: 680px; width: 100%; }
+.confirm-check { margin-bottom: 28px; }
+.confirm-check__circle { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-green), var(--neon-blue)); display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 0 40px rgba(0,255,148,0.4), 0 0 80px rgba(0,217,255,0.2); color: white; animation: pulse-glow 2s ease-in-out infinite; }
+.confirm-content { padding: 40px; border-radius: 20px; }
+.confirm-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: rgba(0,255,148,0.1); border: 1px solid rgba(0,255,148,0.25); border-radius: 100px; font-size: 0.9rem; font-weight: 700; color: var(--neon-green); }
+.confirm-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.confirm-detail-card { padding: 20px; border-radius: 12px; text-align: center; }
+.confirm-detail-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.confirm-detail-value { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; }
+.confirm-address { padding: 20px; border-radius: 12px; text-align: left; margin-bottom: 28px; }
+.confirm-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.confirm-share { }
+.confirm-share-text { padding: 16px; border-radius: 10px; font-size: 0.875rem; color: var(--text-secondary); font-style: italic; margin-top: 8px; }
+.confirm-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confirm-confetti__dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; top: -10px; animation: particle-float 3s linear infinite; opacity: 0.6; }
+@media (max-width: 600px) { .confirm-details { grid-template-columns: 1fr; } .confirm-content { padding: 24px 20px; } }
