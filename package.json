@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "HalfRobo AI Robotics & IoT E-Commerce Platform",
   "private": true,
+  "type": "module",
   "scripts": {
+    "start": "node server/server.js",
+    "build": "cd server && npm install",
     "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm run dev",
-    "seed": "cd server && npm run seed"
+    "seed": "cd server && node seed.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
