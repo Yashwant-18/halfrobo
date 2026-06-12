@@ -1,3 +1,11 @@
+# ─── Dependencies (NEVER commit these) ────────────────────────
+node_modules/
+server/node_modules/
+client/node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+
 # ─── Environment & Secrets (NEVER commit these) ───────────────
 .env
 .env.*
@@ -18,9 +26,15 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+*.db-shm
+*.db-wal
 
-# ─── Uploads (local only, use cloud storage in prod) ──────────
+# ─── Uploads (local only) ────────────────────────────────────
 server/uploads/
+
+# ─── Logs ─────────────────────────────────────────────────────
+*.log
+server/server.log
 
 # ─── OS files ─────────────────────────────────────────────────
 .DS_Store
