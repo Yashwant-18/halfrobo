@@ -51,7 +51,8 @@ export default function Navbar() {
         <div className="container navbar__inner">
           {/* Logo */}
           <Link to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>
-            <img src="/logo.png" alt="HalfRobo" className="navbar__logo-img" />
+            <span className="navbar__logo-icon">⬡</span>
+            <span className="navbar__logo-text">Half<span className="text-gradient">Robo</span></span>
           </Link>
 
           {/* Desktop Nav Links */}
