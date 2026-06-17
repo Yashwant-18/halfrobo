@@ -165,7 +165,7 @@
   font-size: 0.8rem;
   color: var(--text-muted);
 }
-.footer__made-with { color: var(--text-muted); }
+.footer__made-with { text-align: right; }
 
 /* ─── MAP SECTION ──────────────────────────────────────────── */
 .footer__map-section {

@@ -74,74 +74,7 @@ export default function Footer() {
       <div className="footer__glow-line" />
       <div className="container">
 
-        {/* ── Top Section ──────────────────────────── */}
-        <div className="footer__top">
-          {/* Brand */}
-          <div className="footer__brand">
-            <Link to="/" className="footer__logo">
-              <span className="footer__logo-icon">⬡</span>
-              <span>Half<span className="text-gradient">Robo</span></span>
-            </Link>
-            <p className="footer__tagline">{settings.footer_tagline}</p>
-            <div className="footer__contact-info">
-              {settings.footer_address && (
-                <div className="footer__contact-item"><FiMapPin size={14}/><span>{settings.footer_address}</span></div>
-              )}
-              {settings.footer_phone && (
-                <div className="footer__contact-item"><FiPhone size={14}/><span>{settings.footer_phone}</span></div>
-              )}
-              {settings.footer_email && (
-                <div className="footer__contact-item"><FiMail size={14}/><span>{settings.footer_email}</span></div>
-              )}
-            </div>
-            <div className="footer__socials">
-              {socials.map(s => (
-                <a
-                  key={s.label}
-                  href={s.href === '#' ? undefined : s.href}
-                  className={`footer__social ${s.href === '#' ? 'footer__social--disabled' : ''}`}
-                  aria-label={s.label}
-                  target={s.href !== '#' ? '_blank' : undefined}
-                  rel="noopener noreferrer"
-                >
-                  <s.icon size={18} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Links */}
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group} className="footer__col">
-              <h4 className="footer__col-title">{group}</h4>
-              <ul className="footer__col-links">
-                {links.map(link => (
-                  <li key={link.label}>
-                    <Link to={link.to} className="footer__link">
-                      <FiArrowRight size={12} />{link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Newsletter */}
-          <div className="footer__newsletter">
-            <h4 className="footer__col-title">Stay Updated</h4>
-            <p className="footer__newsletter-desc">Get the latest on AI robotics breakthroughs and exclusive deals.</p>
-            <form className="footer__newsletter-form" onSubmit={e => e.preventDefault()}>
-              <input type="email" placeholder="Enter your email" className="footer__newsletter-input" />
-              <button type="submit" className="btn btn-primary btn-sm">Subscribe</button>
-            </form>
-            <div className="footer__badges">
-              <span className="badge badge-blue">🔒 SSL Secured</span>
-              <span className="badge badge-purple">🤖 AI Powered</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Map Section ──────────────────────────── */}
+       {/* ── Map Section ──────────────────────────── */}
         {showMap && (
           <div className="footer__map-section">
             <div className="footer__map-header">
@@ -180,6 +113,74 @@ export default function Footer() {
             </div>
           </div>
         )}
+        {/* ── Top Section ──────────────────────────── */}
+        <div className="footer__top">
+          {/* Brand */}
+          <div className="footer__brand">
+            <Link to="/" className="footer__logo">
+              <span className="footer__logo-icon">⬡</span>
+              <span>Half<span className="text-gradient">Robo</span></span>
+            </Link>
+            <p className="footer__tagline">{settings.footer_tagline}</p>
+            <div className="footer__contact-info">
+              {settings.footer_address && (
+                <div className="footer__contact-item"><FiMapPin size={14}/><span>{settings.footer_address}</span></div>
+              )}
+              {settings.footer_phone && (
+                <div className="footer__contact-item"><FiPhone size={14}/><span>{settings.footer_phone}</span></div>
+              )}
+              {settings.footer_email && (
+                <div className="footer__contact-item"><FiMail size={14}/><span>{settings.footer_email}</span></div>
+              )}
+            </div>
+        <div className="footer__socials">
+          {socials.map(s => (
+            <a
+              key={s.label}
+              href={s.href}
+              className={`footer__social ${s.href === '#' ? 'footer__social--disabled' : ''}`}
+              aria-label={s.label}
+              target={s.href !== '#' ? '_blank' : undefined}
+              rel="noopener noreferrer"
+            >
+              <s.icon size={18} />
+            </a>
+          ))}
+        </div>
+          </div>
+
+          {/* Links */}
+          {Object.entries(footerLinks).map(([group, links]) => (
+            <div key={group} className="footer__col">
+              <h4 className="footer__col-title">{group}</h4>
+              <ul className="footer__col-links">
+                {links.map(link => (
+                  <li key={link.label}>
+                    <Link to={link.to} className="footer__link">
+                      <FiArrowRight size={12} />{link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {/* Newsletter */}
+          <div className="footer__newsletter">
+            <h4 className="footer__col-title">Stay Updated</h4>
+            <p className="footer__newsletter-desc">Get the latest on AI robotics breakthroughs and exclusive deals.</p>
+            <form className="footer__newsletter-form" onSubmit={e => e.preventDefault()}>
+              <input type="email" placeholder="Enter your email" className="footer__newsletter-input" />
+              <button type="submit" className="btn btn-primary btn-sm">Subscribe</button>
+            </form>
+            <div className="footer__badges">
+              <span className="badge badge-blue">🔒 SSL Secured</span>
+              <span className="badge badge-purple">🤖 AI Powered</span>
+            </div>
+          </div>
+        </div>
+
+       
 
         {/* ── Bottom bar ───────────────────────────── */}
         <div className="footer__bottom">
