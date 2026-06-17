@@ -17,6 +17,7 @@ import OrderConfirmationPage from './pages/user/OrderConfirmationPage';
 import DashboardPage from './pages/user/DashboardPage';
 import AboutPage from './pages/user/AboutPage';
 import ContactPage from './pages/user/ContactPage';
+import ProjectsPage from './pages/user/ProjectsPage';
 
 // Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="/dashboard/*" element={<DashboardPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
             </Route>
 
             {/* Auth Pages (no layout) */}

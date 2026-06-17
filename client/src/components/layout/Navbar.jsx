@@ -40,6 +40,7 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/products', label: 'Products' },
+    { to: '/projects', label: 'Projects' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
   ];
@@ -50,8 +51,7 @@ export default function Navbar() {
         <div className="container navbar__inner">
           {/* Logo */}
           <Link to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>
-            <span className="navbar__logo-icon">⬡</span>
-            <span className="navbar__logo-text">Half<span className="text-gradient">Robo</span></span>
+            <img src="/logo.png" alt="HalfRobo" className="navbar__logo-img" />
           </Link>
 
           {/* Desktop Nav Links */}
