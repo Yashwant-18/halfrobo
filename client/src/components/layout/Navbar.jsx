@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut, FiPackage, FiHeart, FiChevronDown, FiSettings } from 'react-icons/fi';
@@ -13,6 +13,7 @@ export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const { itemCount, setIsOpen } = useCart();
   const navigate = useNavigate();
+  const userMenuRef = useRef(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -22,6 +23,19 @@ export default function Navbar() {
 
   // Close menus on route change
   useEffect(() => { setMobileOpen(false); setUserMenuOpen(false); }, []);
+
+  // Close dropdown when clicking OUTSIDE the menu
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userMenuOpen]);
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -69,7 +83,7 @@ export default function Navbar() {
 
             {/* User Menu / Auth Buttons */}
             {user ? (
-              <div className="navbar__user-menu" onMouseLeave={() => setUserMenuOpen(false)}>
+              <div className="navbar__user-menu" ref={userMenuRef}>
                 <button className="navbar__user-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
                   <div className="navbar__avatar">{user.name?.[0]?.toUpperCase()}</div>
                   <span className="navbar__user-name">{user.name?.split(' ')[0]}</span>
