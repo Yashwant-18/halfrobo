@@ -30,6 +30,7 @@ import ReviewManagement from './pages/admin/ReviewManagement';
 import InventoryPage from './pages/admin/InventoryPage';
 import AnalyticsPage from './pages/admin/AnalyticsPage';
 import SettingsPage from './pages/admin/SettingsPage';
+import AdminProjectsPage from './pages/admin/AdminProjectsPage';
 
 export default function App() {
   return (
@@ -81,6 +82,7 @@ export default function App() {
               <Route path="users" element={<UserManagement />} />
               <Route path="categories" element={<CategoryManagement />} />
               <Route path="reviews" element={<ReviewManagement />} />
+              <Route path="projects" element={<AdminProjectsPage />} />
               <Route path="inventory" element={<InventoryPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="settings" element={<SettingsPage />} />
