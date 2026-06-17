@@ -191,113 +191,119 @@ export default function AdminProjectsPage() {
       <AnimatePresence>
         {modalOpen && (
           <>
-            <motion.div className="ap-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setModalOpen(false)} />
-            <motion.div className="ap-modal glass" initial={{ opacity: 0, scale: 0.93, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.93, y: 20 }}>
-              {/* Modal Header */}
-              <div className="ap-modal__header">
-                <h2>{editing ? 'Edit Project' : 'Add New Project'}</h2>
-                <button onClick={() => setModalOpen(false)} className="ap-modal__close"><FiX size={22} /></button>
-              </div>
-
-              <form onSubmit={handleSave} className="ap-modal__body">
-                {/* ── LEFT: Form Fields ── */}
-                <div className="ap-modal__fields">
-                  <div className="ap-field">
-                    <label>Project Name *</label>
-                    <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. NeuroBot Controller" required />
-                  </div>
-                  <div className="ap-field">
-                    <label>Description</label>
-                    <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="What does this project do?" rows={3} />
-                  </div>
-                  <div className="ap-field-row">
-                    <div className="ap-field">
-                      <label>Category</label>
-                      <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    <div className="ap-field">
-                      <label>Sort Order</label>
-                      <input type="number" value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: e.target.value }))} placeholder="0" />
-                    </div>
-                  </div>
-                  <div className="ap-field">
-                    <label>Tech Stack <span>(comma separated)</span></label>
-                    <input value={form.tech_stack} onChange={e => setForm(f => ({ ...f, tech_stack: e.target.value }))} placeholder="React, Node.js, Python, Arduino" />
-                  </div>
-                  <div className="ap-field-row">
-                    <div className="ap-field">
-                      <label><FiGithub size={12} /> GitHub URL</label>
-                      <input value={form.github_url} onChange={e => setForm(f => ({ ...f, github_url: e.target.value }))} placeholder="https://github.com/..." />
-                    </div>
-                    <div className="ap-field">
-                      <label><FiExternalLink size={12} /> Live URL</label>
-                      <input value={form.live_url} onChange={e => setForm(f => ({ ...f, live_url: e.target.value }))} placeholder="https://..." />
-                    </div>
-                  </div>
-                  <div className="ap-field">
-                    <label><FiDownload size={12} /> Code Download URL <span>(zip link)</span></label>
-                    <input value={form.code_download_url} onChange={e => setForm(f => ({ ...f, code_download_url: e.target.value }))} placeholder="https://github.com/.../archive/main.zip" />
-                  </div>
-                  <label className="ap-featured-toggle">
-                    <input type="checkbox" checked={form.is_featured} onChange={e => setForm(f => ({ ...f, is_featured: e.target.checked }))} />
-                    <span>⭐ Mark as Featured</span>
-                  </label>
-                  <div className="ap-modal__btns">
-                    <button type="button" className="btn btn-ghost" onClick={() => setModalOpen(false)}>Cancel</button>
-                    <button type="submit" className="btn btn-primary" disabled={saving}>
-                      {saving ? 'Saving...' : editing ? 'Update Project' : 'Add to Database'}
-                    </button>
-                  </div>
+            {/* Overlay */}
+            <motion.div
+              className="ap-overlay"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setModalOpen(false)}
+            />
+            {/* Centering wrapper — flex center so Framer Motion transform doesn't conflict */}
+            <div className="ap-modal-wrap">
+              <motion.div
+                className="ap-modal glass"
+                initial={{ opacity: 0, scale: 0.93, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.93, y: 20 }}
+              >
+                {/* Header */}
+                <div className="ap-modal__header">
+                  <h2>{editing ? 'Edit Project' : 'Add New Project'}</h2>
+                  <button onClick={() => setModalOpen(false)} className="ap-modal__close"><FiX size={22} /></button>
                 </div>
 
-                {/* ── RIGHT: Image Sidebar ── */}
-                <div className="ap-img-sidebar">
-                  <div className="ap-img-sidebar__header">
-                    <span><FiImage size={14} /> Project Images</span>
-                    <span className="ap-img-count">{images.length}/{MAX_IMAGES}</span>
-                  </div>
-
-                  {/* Drop Zone */}
-                  {images.length < MAX_IMAGES && (
-                    <div
-                      className={`ap-dropzone ${dragOver ? 'ap-dropzone--active' : ''}`}
-                      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-                      onDragLeave={() => setDragOver(false)}
-                      onDrop={handleDrop}
-                      onClick={() => fileRef.current.click()}
-                    >
-                      <FiUpload size={28} />
-                      <p>Drop images here<br /><span>or click to browse</span></p>
-                      <p className="ap-dropzone__limit">Max {MAX_IMAGES} images · JPG, PNG, WEBP</p>
-                      <input
-                        ref={fileRef} type="file" accept="image/*" multiple hidden
-                        onChange={e => handleFiles(e.target.files)}
-                      />
+                <form onSubmit={handleSave} className="ap-modal__body">
+                  {/* ── LEFT: Form Fields ── */}
+                  <div className="ap-modal__fields">
+                    <div className="ap-field">
+                      <label>Project Name *</label>
+                      <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. NeuroBot Controller" required />
                     </div>
-                  )}
-
-                  {/* Image Previews */}
-                  <div className="ap-img-previews">
-                    {images.map((img, idx) => (
-                      <div key={idx} className="ap-img-preview">
-                        <img src={img.preview} alt={`preview-${idx}`} />
-                        {img.existing && <span className="ap-img-preview__badge">Saved</span>}
-                        <button type="button" className="ap-img-preview__remove" onClick={() => removeImage(idx)}>
-                          <FiX size={12} />
-                        </button>
-                        {idx === 0 && <span className="ap-img-preview__main">Cover</span>}
+                    <div className="ap-field">
+                      <label>Description</label>
+                      <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="What does this project do?" rows={3} />
+                    </div>
+                    <div className="ap-field-row">
+                      <div className="ap-field">
+                        <label>Category</label>
+                        <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
                       </div>
-                    ))}
+                      <div className="ap-field">
+                        <label>Sort Order</label>
+                        <input type="number" value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: e.target.value }))} placeholder="0" />
+                      </div>
+                    </div>
+                    <div className="ap-field">
+                      <label>Tech Stack <span>(comma separated)</span></label>
+                      <input value={form.tech_stack} onChange={e => setForm(f => ({ ...f, tech_stack: e.target.value }))} placeholder="React, Node.js, Python, Arduino" />
+                    </div>
+                    <div className="ap-field-row">
+                      <div className="ap-field">
+                        <label><FiGithub size={12} /> GitHub URL</label>
+                        <input value={form.github_url} onChange={e => setForm(f => ({ ...f, github_url: e.target.value }))} placeholder="https://github.com/..." />
+                      </div>
+                      <div className="ap-field">
+                        <label><FiExternalLink size={12} /> Live URL</label>
+                        <input value={form.live_url} onChange={e => setForm(f => ({ ...f, live_url: e.target.value }))} placeholder="https://..." />
+                      </div>
+                    </div>
+                    <div className="ap-field">
+                      <label><FiDownload size={12} /> Code Download URL <span>(zip link)</span></label>
+                      <input value={form.code_download_url} onChange={e => setForm(f => ({ ...f, code_download_url: e.target.value }))} placeholder="https://github.com/.../archive/main.zip" />
+                    </div>
+                    <label className="ap-featured-toggle">
+                      <input type="checkbox" checked={form.is_featured} onChange={e => setForm(f => ({ ...f, is_featured: e.target.checked }))} />
+                      <span>⭐ Mark as Featured</span>
+                    </label>
+                    <div className="ap-modal__btns">
+                      <button type="button" className="btn btn-ghost" onClick={() => setModalOpen(false)}>Cancel</button>
+                      <button type="submit" className="btn btn-primary" disabled={saving}>
+                        {saving ? 'Saving...' : editing ? 'Update Project' : 'Add to Database'}
+                      </button>
+                    </div>
                   </div>
 
-                  {images.length === 0 && (
-                    <p className="ap-img-sidebar__hint">Add images to showcase your project</p>
-                  )}
-                </div>
-              </form>
-            </motion.div>
+                  {/* ── RIGHT: Image Sidebar ── */}
+                  <div className="ap-img-sidebar">
+                    <div className="ap-img-sidebar__header">
+                      <span><FiImage size={14} /> Project Images</span>
+                      <span className="ap-img-count">{images.length}/{MAX_IMAGES}</span>
+                    </div>
+
+                    {images.length < MAX_IMAGES && (
+                      <div
+                        className={`ap-dropzone ${dragOver ? 'ap-dropzone--active' : ''}`}
+                        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                        onDragLeave={() => setDragOver(false)}
+                        onDrop={handleDrop}
+                        onClick={() => fileRef.current.click()}
+                      >
+                        <FiUpload size={28} />
+                        <p>Drop images here<br /><span>or click to browse</span></p>
+                        <p className="ap-dropzone__limit">Max {MAX_IMAGES} images · JPG, PNG, WEBP</p>
+                        <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={e => handleFiles(e.target.files)} />
+                      </div>
+                    )}
+
+                    <div className="ap-img-previews">
+                      {images.map((img, idx) => (
+                        <div key={idx} className="ap-img-preview">
+                          <img src={img.preview} alt={`preview-${idx}`} />
+                          {img.existing && <span className="ap-img-preview__badge">Saved</span>}
+                          <button type="button" className="ap-img-preview__remove" onClick={() => removeImage(idx)}><FiX size={12} /></button>
+                          {idx === 0 && <span className="ap-img-preview__main">Cover</span>}
+                        </div>
+                      ))}
+                    </div>
+
+                    {images.length === 0 && (
+                      <p className="ap-img-sidebar__hint">Add images to showcase your project</p>
+                    )}
+                  </div>
+                </form>
+              </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
