@@ -13,7 +13,7 @@ const initProjects = async () => {
       name VARCHAR(255) NOT NULL,
       description TEXT,
       tech_stack JSONB DEFAULT '[]',
-      preview_image TEXT,
+      images JSONB DEFAULT '[]',
       github_url TEXT,
       live_url TEXT,
       code_download_url TEXT,
@@ -24,6 +24,8 @@ const initProjects = async () => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    -- add images column if table already existed with old schema
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]';
   `);
 };
 initProjects().catch(console.error);
@@ -70,17 +72,23 @@ router.get('/:id', async (req, res) => {
 // ── POST /api/projects — Admin: create project ──────────────────
 router.post('/', authenticateToken, requireAdmin, uploadMultiple, processImage, async (req, res) => {
   try {
-    const { name, description, tech_stack, github_url, live_url, category, is_featured, sort_order } = req.body;
-    const previewImage = req.files?.find(f => f.fieldname === 'images')?.filename
-      ? `/uploads/products/${req.files.find(f => f.fieldname === 'images').filename}`
-      : null;
+    const { name, description, tech_stack, github_url, live_url, code_download_url, category, is_featured, sort_order } = req.body;
 
-    const techArr = typeof tech_stack === 'string' ? JSON.parse(tech_stack) : (tech_stack || []);
+    // Collect uploaded image paths (max 6)
+    const imagePaths = (req.files || [])
+      .slice(0, 6)
+      .map(f => `/uploads/products/${f.filename}`);
+
+    const techArr = typeof tech_stack === 'string'
+      ? tech_stack.split(',').map(t => t.trim()).filter(Boolean)
+      : (tech_stack || []);
 
     const result = await pool.query(
-      `INSERT INTO projects (name, description, tech_stack, preview_image, github_url, live_url, category, is_featured, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [name, description, JSON.stringify(techArr), previewImage, github_url, live_url, category, is_featured === 'true', parseInt(sort_order) || 0]
+      `INSERT INTO projects (name, description, tech_stack, images, github_url, live_url, code_download_url, category, is_featured, sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      [name, description, JSON.stringify(techArr), JSON.stringify(imagePaths),
+       github_url, live_url, code_download_url,
+       category, is_featured === 'true', parseInt(sort_order) || 0]
     );
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (err) {
@@ -90,18 +98,29 @@ router.post('/', authenticateToken, requireAdmin, uploadMultiple, processImage, 
 });
 
 // ── PUT /api/projects/:id — Admin: update project ───────────────
-router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
+router.put('/:id', authenticateToken, requireAdmin, uploadMultiple, processImage, async (req, res) => {
   try {
-    const { name, description, tech_stack, github_url, live_url, category, is_featured, is_active, sort_order, code_download_url } = req.body;
-    const techArr = typeof tech_stack === 'string' ? JSON.parse(tech_stack) : (tech_stack || []);
+    const { name, description, tech_stack, github_url, live_url, category,
+            is_featured, is_active, sort_order, code_download_url, keep_images } = req.body;
+
+    const techArr = typeof tech_stack === 'string'
+      ? tech_stack.split(',').map(t => t.trim()).filter(Boolean)
+      : (tech_stack || []);
+
+    // Merge kept existing images + new uploads (max 6 total)
+    let existingImages = [];
+    try { existingImages = JSON.parse(keep_images || '[]'); } catch {}
+    const newImages = (req.files || []).map(f => `/uploads/products/${f.filename}`);
+    const allImages = [...existingImages, ...newImages].slice(0, 6);
 
     const result = await pool.query(
       `UPDATE projects SET
-        name=$1, description=$2, tech_stack=$3, github_url=$4, live_url=$5,
-        category=$6, is_featured=$7, is_active=$8, sort_order=$9, code_download_url=$10,
+        name=$1, description=$2, tech_stack=$3, images=$4, github_url=$5, live_url=$6,
+        category=$7, is_featured=$8, is_active=$9, sort_order=$10, code_download_url=$11,
         updated_at=CURRENT_TIMESTAMP
-       WHERE id=$11 RETURNING *`,
-      [name, description, JSON.stringify(techArr), github_url, live_url, category,
+       WHERE id=$12 RETURNING *`,
+      [name, description, JSON.stringify(techArr), JSON.stringify(allImages),
+       github_url, live_url, category,
        is_featured === 'true' || is_featured === true,
        is_active !== 'false' && is_active !== false,
        parseInt(sort_order) || 0, code_download_url, req.params.id]
