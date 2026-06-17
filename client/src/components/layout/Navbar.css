@@ -30,29 +30,14 @@
   gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
-  position: relative;
 }
-.navbar__logo::after {
-  content: '';
-  position: absolute;
-  inset: -6px -10px;
-  border-radius: 12px;
-  background: radial-gradient(ellipse, rgba(0,217,255,0.06) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.navbar__logo:hover::after { opacity: 1; }
 .navbar__logo-img {
-  height: 52px;
+  height: 60px;
+  min-width: 160px;
   width: auto;
   object-fit: contain;
   mix-blend-mode: screen;
-  filter: brightness(1.1);
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-.navbar__logo:hover .navbar__logo-img {
-  filter: brightness(1.25) drop-shadow(0 0 12px rgba(0,217,255,0.6));
-  transform: scale(1.04);
+  filter: brightness(1.15);
 }
 .navbar__logo-icon {
   font-size: 1.6rem;
