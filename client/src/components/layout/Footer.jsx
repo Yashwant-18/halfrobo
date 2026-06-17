@@ -79,8 +79,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__brand">
             <Link to="/" className="footer__logo">
-              <span className="footer__logo-icon">⬡</span>
-              <span>Half<span className="text-gradient">Robo</span></span>
+              <img src="/logo.png" alt="HalfRobo" className="footer__logo-img" />
             </Link>
             <p className="footer__tagline">{settings.footer_tagline}</p>
             <div className="footer__contact-info">
