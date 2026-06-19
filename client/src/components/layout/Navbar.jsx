@@ -53,7 +53,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>
             <span className="navbar__logo-icon">⬡</span>
-            <span className="navbar__logo-text">Half<span className="text-gradient">Robo</span></span>
+            <span className="navbar__logo-text">HALF<span className="text-gradient">ROBO</span></span>
           </Link>
 
           {/* Desktop Nav Links */}

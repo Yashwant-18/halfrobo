@@ -29,8 +29,9 @@
   align-items: center;
   gap: 10px;
   font-family: var(--font-heading);
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: white;
   text-decoration: none;
   margin-bottom: 16px;

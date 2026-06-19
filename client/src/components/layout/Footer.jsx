@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS = {
   footer_address:      'Bengaluru, Karnataka, India',
   footer_phone:        '+91 98765 43210',
   footer_email:        'hello@halfrobo.com',
-  footer_copyright:    '© 2025 HalfRobo Technologies Pvt. Ltd. All rights reserved.',
+  footer_copyright:    '© 2025 HALFROBO TECHNOLOGIES PVT. LTD. ALL RIGHTS RESERVED.',
   footer_twitter:      '#',
   footer_instagram:    '#',
   footer_linkedin:     '#',
@@ -131,7 +131,7 @@ export default function Footer() {
           <div className="footer__brand">
             <Link to="/" className="footer__logo">
               <span className="footer__logo-icon">⬡</span>
-              <span>Half<span className="text-gradient">Robo</span></span>
+              <span>HALF<span className="text-gradient">ROBO</span></span>
             </Link>
             <p className="footer__tagline">{settings.footer_tagline}</p>
             <div className="footer__contact-info">
