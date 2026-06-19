@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiTwitter, FiInstagram, FiLinkedin, FiYoutube, FiGithub,
-         FiMail, FiMapPin, FiPhone, FiArrowRight, FiNavigation, FiExternalLink } from 'react-icons/fi';
+         FiMail, FiMapPin, FiPhone, FiArrowRight, FiNavigation, FiExternalLink,
+         FiZap, FiShield, FiGlobe, FiAward, FiPrinter, FiTrendingUp } from 'react-icons/fi';
 import api from '../../utils/api';
 import './Footer.css';
 
@@ -47,8 +48,22 @@ const DEFAULT_SETTINGS = {
   footer_map_show:     'true',
 };
 
+const STATS = [
+  { icon: FiTrendingUp, value: '12K+',  label: 'Happy Customers',   color: 'var(--neon-blue)' },
+  { icon: FiZap,        value: '500+',  label: 'Products Shipped',  color: 'var(--neon-purple)' },
+  { icon: FiGlobe,      value: '28+',   label: 'Countries Served',  color: 'var(--neon-green)' },
+  { icon: FiAward,      value: '99.4%', label: 'Satisfaction Rate', color: '#FFB800' },
+];
+
+const SERVICES = [
+  { icon: FiPrinter,  title: '3D Printing',      desc: 'Custom model printing in PLA, ABS, Resin & more.',         to: '/3d-print',  cta: 'Order Now' },
+  { icon: FiZap,      title: 'AI Integration',   desc: 'Embed AI into your robotics projects with our SDK.',       to: '/products',  cta: 'Explore' },
+  { icon: FiShield,   title: 'Lifetime Support', desc: '24/7 expert support for all HalfRobo products.',           to: '/contact',   cta: 'Contact Us' },
+];
+
 export default function Footer() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     api.get('/settings/footer')
@@ -74,7 +89,7 @@ export default function Footer() {
       <div className="footer__glow-line" />
       <div className="container">
 
-       {/* ── Map Section ──────────────────────────── */}
+        {/* ── Map Section ──────────────────────────── */}
         {showMap && (
           <div className="footer__map-section">
             <div className="footer__map-header">
@@ -93,9 +108,7 @@ export default function Footer() {
             </div>
 
             <div className="footer__map-wrap">
-              {/* Neon border glow */}
               <div className="footer__map-glow" />
-
               <iframe
                 title="HalfRobo Store Location"
                 src={mapEmbedURL}
@@ -104,8 +117,6 @@ export default function Footer() {
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
               />
-
-              {/* Location badge overlay */}
               <div className="footer__map-badge">
                 <FiMapPin size={12} />
                 <span>{mapLocation}</span>
@@ -113,6 +124,7 @@ export default function Footer() {
             </div>
           </div>
         )}
+
         {/* ── Top Section ──────────────────────────── */}
         <div className="footer__top">
           {/* Brand */}
@@ -133,20 +145,20 @@ export default function Footer() {
                 <div className="footer__contact-item"><FiMail size={14}/><span>{settings.footer_email}</span></div>
               )}
             </div>
-        <div className="footer__socials">
-          {socials.map(s => (
-            <a
-              key={s.label}
-              href={s.href}
-              className={`footer__social ${s.href === '#' ? 'footer__social--disabled' : ''}`}
-              aria-label={s.label}
-              target={s.href !== '#' ? '_blank' : undefined}
-              rel="noopener noreferrer"
-            >
-              <s.icon size={18} />
-            </a>
-          ))}
-        </div>
+            <div className="footer__socials">
+              {socials.map(s => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  className={`footer__social ${s.href === '#' ? 'footer__social--disabled' : ''}`}
+                  aria-label={s.label}
+                  target={s.href !== '#' ? '_blank' : undefined}
+                  rel="noopener noreferrer"
+                >
+                  <s.icon size={18} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Links */}
@@ -169,8 +181,14 @@ export default function Footer() {
           <div className="footer__newsletter">
             <h4 className="footer__col-title">Stay Updated</h4>
             <p className="footer__newsletter-desc">Get the latest on AI robotics breakthroughs and exclusive deals.</p>
-            <form className="footer__newsletter-form" onSubmit={e => e.preventDefault()}>
-              <input type="email" placeholder="Enter your email" className="footer__newsletter-input" />
+            <form className="footer__newsletter-form" onSubmit={e => { e.preventDefault(); setEmail(''); }}>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="footer__newsletter-input"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
               <button type="submit" className="btn btn-primary btn-sm">Subscribe</button>
             </form>
             <div className="footer__badges">
@@ -180,7 +198,61 @@ export default function Footer() {
           </div>
         </div>
 
-       
+        {/* ══════════════════════════════════════════════════════
+            NEW SECTION — Stats + Services + CTA
+        ══════════════════════════════════════════════════════ */}
+        <div className="footer__extra">
+
+          {/* Stats Row */}
+          <div className="footer__stats">
+            {STATS.map(s => (
+              <div key={s.label} className="footer__stat-card">
+                <div className="footer__stat-icon" style={{ color: s.color, boxShadow: `0 0 18px ${s.color}33` }}>
+                  <s.icon size={20} />
+                </div>
+                <div className="footer__stat-value" style={{ color: s.color }}>{s.value}</div>
+                <div className="footer__stat-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="footer__extra-divider" />
+
+          {/* Services / Feature Cards */}
+          <div className="footer__services">
+            {SERVICES.map(sv => (
+              <div key={sv.title} className="footer__service-card">
+                <div className="footer__service-icon">
+                  <sv.icon size={22} />
+                </div>
+                <div className="footer__service-body">
+                  <div className="footer__service-title">{sv.title}</div>
+                  <div className="footer__service-desc">{sv.desc}</div>
+                </div>
+                <Link to={sv.to} className="footer__service-cta">
+                  {sv.cta} <FiArrowRight size={13} />
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Banner */}
+          <div className="footer__cta-banner">
+            <div className="footer__cta-banner__glow" />
+            <div className="footer__cta-banner__content">
+              <div className="footer__cta-banner__text">
+                <h3>Ready to build the future?</h3>
+                <p>Explore our full catalogue of AI-powered robots & IoT solutions.</p>
+              </div>
+              <div className="footer__cta-banner__actions">
+                <Link to="/products" className="btn btn-primary">Browse Products</Link>
+                <Link to="/3d-print" className="btn btn-ghost footer__cta-ghost">🖨️ 3D Print</Link>
+              </div>
+            </div>
+          </div>
+
+        </div>
 
         {/* ── Bottom bar ───────────────────────────── */}
         <div className="footer__bottom">
