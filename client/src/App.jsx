@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import UserLayout from './layouts/UserLayout';
 import AdminLayout from './layouts/AdminLayout';
+import NoFooterLayout from './layouts/NoFooterLayout';
 
 // User Pages (lazy-like direct imports for reliability)
 import HomePage from './pages/user/HomePage';
@@ -69,6 +70,10 @@ export default function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+            </Route>
+
+            {/* Pages with Navbar but NO Footer */}
+            <Route element={<NoFooterLayout />}>
               <Route path="/3d-print" element={<PrintOrderPage />} />
             </Route>
 
