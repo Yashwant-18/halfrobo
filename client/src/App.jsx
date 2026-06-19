@@ -58,45 +58,46 @@ export default function App() {
             }}
           />
           <Routes>
-            {/* User Routes */}
+            {/* ── Pages WITH Footer (Home + About only) ── */}
             <Route element={<UserLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/products/:id" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-              <Route path="/dashboard/*" element={<DashboardPage />} />
+              <Route path="/"      element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
             </Route>
 
-            {/* Pages with Navbar but NO Footer */}
+            {/* ── All other user pages — Navbar only, NO Footer ── */}
             <Route element={<NoFooterLayout />}>
-              <Route path="/3d-print" element={<PrintOrderPage />} />
+              <Route path="/products"            element={<ProductsPage />} />
+              <Route path="/products/:id"        element={<ProductDetailPage />} />
+              <Route path="/cart"                element={<CartPage />} />
+              <Route path="/checkout"            element={<CheckoutPage />} />
+              <Route path="/order-confirmation"  element={<OrderConfirmationPage />} />
+              <Route path="/dashboard/*"         element={<DashboardPage />} />
+              <Route path="/contact"             element={<ContactPage />} />
+              <Route path="/projects"            element={<ProjectsPage />} />
+              <Route path="/3d-print"            element={<PrintOrderPage />} />
             </Route>
 
-            {/* Auth Pages (no layout) */}
-            <Route path="/login" element={<LoginPage />} />
+            {/* ── Auth Pages (no layout at all) ── */}
+            <Route path="/login"    element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Admin Routes */}
+            {/* ── Admin Routes ── */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<ProductManagement />} />
-              <Route path="orders" element={<OrderManagement />} />
-              <Route path="users" element={<UserManagement />} />
-              <Route path="categories" element={<CategoryManagement />} />
-              <Route path="reviews" element={<ReviewManagement />} />
-              <Route path="projects" element={<AdminProjectsPage />} />
-              <Route path="3dprint" element={<Admin3DPrintPage />} />
-              <Route path="inventory" element={<InventoryPage />} />
-              <Route path="analytics" element={<AnalyticsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
+              <Route index                  element={<AdminDashboard />} />
+              <Route path="products"        element={<ProductManagement />} />
+              <Route path="orders"          element={<OrderManagement />} />
+              <Route path="users"           element={<UserManagement />} />
+              <Route path="categories"      element={<CategoryManagement />} />
+              <Route path="reviews"         element={<ReviewManagement />} />
+              <Route path="projects"        element={<AdminProjectsPage />} />
+              <Route path="3dprint"         element={<Admin3DPrintPage />} />
+              <Route path="inventory"       element={<InventoryPage />} />
+              <Route path="analytics"       element={<AnalyticsPage />} />
+              <Route path="settings"        element={<SettingsPage />} />
             </Route>
           </Routes>
+
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
