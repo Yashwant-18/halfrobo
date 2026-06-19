@@ -16,6 +16,7 @@ import categoryRoutes from './routes/categories.js';
 import couponRoutes  from './routes/coupons.js';
 import adminRoutes   from './routes/admin.js';
 import projectRoutes from './routes/projects.js';
+import print3dRoutes from './routes/print3d.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app  = express();
@@ -54,6 +55,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/coupons',    couponRoutes);
 app.use('/api/admin',      adminRoutes);
 app.use('/api/projects',   projectRoutes);
+app.use('/api/3dprint',    print3dRoutes);
 
 // ─── Public: Footer settings (no auth) ───────────────────────
 app.get('/api/settings/footer', async (req, res) => {

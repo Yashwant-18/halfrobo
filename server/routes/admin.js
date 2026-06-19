@@ -76,15 +76,25 @@ router.post('/products', (req, res, next) => {
   });
 }, async (req, res) => {
   try {
-    const { name, description, specifications, price, discountPrice, categoryId, stock, sku, tags, isFeatured, isActive } = req.body;
+    const { name, description, specifications, price, discountPrice, categoryId, stock, sku, tags, isFeatured, isActive, gtin, brand, syncedToMeta, publishDate, discount_price, category_id, is_featured, is_active, synced_to_meta, publish_date } = req.body;
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
     const images = req.files ? req.files.map(f => '/uploads/products/' + f.filename) : [];
     const specs = typeof specifications === 'string' ? JSON.parse(specifications || '{}') : (specifications || {});
     const tagsArr = typeof tags === 'string' ? JSON.parse(tags || '[]') : (tags || []);
     const result = await pool.query(
-      `INSERT INTO products (name, slug, description, specifications, price, discount_price, category_id, images, stock, sku, tags, is_featured, is_active)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
-      [name, slug, description, JSON.stringify(specs), parseFloat(price), discountPrice ? parseFloat(discountPrice) : null, categoryId || null, JSON.stringify(images), parseInt(stock) || 0, sku || null, JSON.stringify(tagsArr), isFeatured === 'true' || isFeatured === true, isActive !== 'false' && isActive !== false]
+      `INSERT INTO products (name, slug, description, specifications, price, discount_price, category_id, images, stock, sku, tags, is_featured, is_active, gtin, brand, synced_to_meta, publish_date)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING *`,
+      [name, slug, description, JSON.stringify(specs), parseFloat(price),
+       (discount_price || discountPrice) ? parseFloat(discount_price || discountPrice) : null,
+       category_id || categoryId || null,
+       JSON.stringify(images), parseInt(stock) || 0, sku || null,
+       JSON.stringify(tagsArr),
+       (is_featured || isFeatured) === 'true' || (is_featured || isFeatured) === true,
+       (is_active || isActive) !== 'false' && (is_active || isActive) !== false,
+       gtin || null, brand || null,
+       (synced_to_meta || syncedToMeta) === 'true' || (synced_to_meta || syncedToMeta) === true,
+       (publish_date || publishDate) || null
+      ]
     );
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (err) { res.status(500).json({ success: false, error: err.message }); }
@@ -97,7 +107,7 @@ router.put('/products/:id', (req, res, next) => {
   });
 }, async (req, res) => {
   try {
-    const { name, description, specifications, price, discountPrice, categoryId, stock, sku, tags, isFeatured, isActive, existingImages } = req.body;
+    const { name, description, specifications, price, discountPrice, categoryId, stock, sku, tags, isFeatured, isActive, existingImages, gtin, brand, syncedToMeta, publishDate, discount_price, category_id, is_featured, is_active, synced_to_meta, publish_date } = req.body;
     const newImages = req.files ? req.files.map(f => '/uploads/products/' + f.filename) : [];
     let images = [];
     if (existingImages) { try { images = JSON.parse(existingImages); } catch(e) { images = []; } }
@@ -107,8 +117,20 @@ router.put('/products/:id', (req, res, next) => {
     const result = await pool.query(
       `UPDATE products SET name=COALESCE($1,name), description=COALESCE($2,description), specifications=$3, price=COALESCE($4,price),
        discount_price=$5, category_id=$6, images=$7, stock=COALESCE($8,stock), sku=COALESCE($9,sku), tags=$10,
-       is_featured=$11, is_active=$12, updated_at=NOW() WHERE id=$13 RETURNING *`,
-      [name, description, JSON.stringify(specs), price ? parseFloat(price) : null, discountPrice ? parseFloat(discountPrice) : null, categoryId || null, JSON.stringify(images), stock ? parseInt(stock) : null, sku, JSON.stringify(tagsArr), isFeatured === 'true' || isFeatured === true, isActive !== 'false' && isActive !== false, req.params.id]
+       is_featured=$11, is_active=$12, gtin=$13, brand=$14, synced_to_meta=$15, publish_date=$16,
+       updated_at=NOW() WHERE id=$17 RETURNING *`,
+      [name, description, JSON.stringify(specs),
+       price ? parseFloat(price) : null,
+       (discount_price || discountPrice) ? parseFloat(discount_price || discountPrice) : null,
+       category_id || categoryId || null,
+       JSON.stringify(images), stock ? parseInt(stock) : null, sku, JSON.stringify(tagsArr),
+       (is_featured || isFeatured) === 'true' || (is_featured || isFeatured) === true,
+       (is_active || isActive) !== 'false' && (is_active || isActive) !== false,
+       gtin || null, brand || null,
+       (synced_to_meta || syncedToMeta) === 'true' || (synced_to_meta || syncedToMeta) === true,
+       (publish_date || publishDate) || null,
+       req.params.id
+      ]
     );
     res.json({ success: true, data: result.rows[0] });
   } catch (err) { res.status(500).json({ success: false, error: err.message }); }
@@ -332,6 +354,43 @@ router.put('/settings', async (req, res) => {
       );
     }
     res.json({ success: true, message: 'Settings saved' });
+  } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+// ─── 3D PRINT ORDERS (ADMIN) ─────────────────────────────────
+router.get('/3dprint', async (req, res) => {
+  try {
+    const { page = 1, limit = 12, status = '', search = '' } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const conditions = []; const params = [];
+    if (status) { conditions.push(`po.status = $${params.length + 1}`); params.push(status); }
+    if (search) { conditions.push(`(u.name ILIKE $${params.length + 1} OR u.email ILIKE $${params.length + 1} OR po.id::text ILIKE $${params.length + 1})`); params.push(`%${search}%`); }
+    const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+    params.push(parseInt(limit)); params.push(offset);
+    const result = await pool.query(
+      `SELECT po.*, u.name as user_name, u.email as user_email FROM print_orders po JOIN users u ON po.user_id = u.id ${where} ORDER BY po.created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+    const count = await pool.query(`SELECT COUNT(*) FROM print_orders po JOIN users u ON po.user_id = u.id ${where}`, params.slice(0, -2));
+    res.json({ success: true, data: result.rows, total: parseInt(count.rows[0].count), page: parseInt(page) });
+  } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+router.put('/3dprint/:id', async (req, res) => {
+  try {
+    const { status, admin_note, price_estimate } = req.body;
+    await pool.query(
+      `UPDATE print_orders SET status=COALESCE($1,status), admin_note=$2, price_estimate=$3, updated_at=NOW() WHERE id=$4`,
+      [status, admin_note || null, price_estimate ? parseFloat(price_estimate) : null, req.params.id]
+    );
+    res.json({ success: true, message: 'Print order updated' });
+  } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+router.delete('/3dprint/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM print_orders WHERE id = $1', [req.params.id]);
+    res.json({ success: true, message: 'Print order deleted' });
   } catch (err) { res.status(500).json({ success: false, error: err.message }); }
 });
 

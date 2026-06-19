@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiGrid, FiPackage, FiShoppingBag, FiUsers, FiTag, FiStar, FiBox, FiBarChart2, FiSettings, FiLogOut, FiMenu, FiX, FiChevronRight, FiCode } from 'react-icons/fi';
+import { FiGrid, FiPackage, FiShoppingBag, FiUsers, FiTag, FiStar, FiBox, FiBarChart2, FiSettings, FiLogOut, FiMenu, FiX, FiChevronRight, FiCode, FiPrinter } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import './AdminSidebar.css';
 
@@ -13,6 +13,7 @@ const navItems = [
   { to: '/admin/categories', label: 'Categories', icon: FiTag },
   { to: '/admin/reviews', label: 'Reviews', icon: FiStar },
   { to: '/admin/projects', label: 'Projects', icon: FiCode },
+  { to: '/admin/3dprint', label: '3D Printing', icon: FiPrinter },
   { to: '/admin/inventory', label: 'Inventory', icon: FiBox },
   { to: '/admin/analytics', label: 'Analytics', icon: FiBarChart2 },
   { to: '/admin/settings', label: 'Settings', icon: FiSettings },

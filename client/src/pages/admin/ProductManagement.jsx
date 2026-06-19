@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiUpload, FiImage } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiUpload, FiImage, FiStar } from 'react-icons/fi';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import './ProductManagement.css';
 
-const EMPTY = { name: '', description: '', price: '', discount_price: '', stock: '', sku: '', category_id: '', is_featured: false, is_active: true, tags: '', specKey: '', specVal: '', specifications: {}, existingImages: [], newImages: [] };
+const EMPTY = {
+  name: '', description: '', price: '', discount_price: '', stock: '', sku: '',
+  gtin: '', brand: '', synced_to_meta: false, publish_date: '',
+  category_id: '', is_featured: false, is_active: true,
+  tags: '', specKey: '', specVal: '', specifications: {},
+  existingImages: [], newImages: []
+};
 
 function AdminPageHeader({ title, subtitle, action }) {
   return (
@@ -32,7 +38,10 @@ export default function ProductManagement() {
 
   const load = () => {
     setLoading(true);
-    api.get(`/admin/products?search=${search}&page=${page}&limit=10`).then(r => { setProducts(r.data.data || []); setTotal(r.data.total || 0); }).catch(() => {}).finally(() => setLoading(false));
+    api.get(`/admin/products?search=${search}&page=${page}&limit=10`)
+      .then(r => { setProducts(r.data.data || []); setTotal(r.data.total || 0); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
   useEffect(load, [search, page]);
   useEffect(() => { api.get('/categories').then(r => setCategories(r.data.data || [])); }, []);
@@ -41,7 +50,17 @@ export default function ProductManagement() {
   const openEdit = p => {
     setEditing(p);
     const specs = typeof p.specifications === 'object' ? p.specifications : {};
-    setForm({ name: p.name, description: p.description || '', price: p.price, discount_price: p.discount_price || '', stock: p.stock, sku: p.sku || '', category_id: p.category_id || '', is_featured: p.is_featured, is_active: p.is_active, tags: Array.isArray(p.tags) ? p.tags.join(', ') : '', specKey: '', specVal: '', specifications: specs, existingImages: Array.isArray(p.images) ? p.images : [], newImages: [] });
+    setForm({
+      name: p.name, description: p.description || '', price: p.price,
+      discount_price: p.discount_price || '', stock: p.stock, sku: p.sku || '',
+      gtin: p.gtin || '', brand: p.brand || '',
+      synced_to_meta: p.synced_to_meta || false,
+      publish_date: p.publish_date ? p.publish_date.split('T')[0] : '',
+      category_id: p.category_id || '', is_featured: p.is_featured, is_active: p.is_active,
+      tags: Array.isArray(p.tags) ? p.tags.join(', ') : '',
+      specKey: '', specVal: '', specifications: specs,
+      existingImages: Array.isArray(p.images) ? p.images : [], newImages: []
+    });
     setPreviews([]);
     setShowModal(true);
   };
@@ -62,9 +81,10 @@ export default function ProductManagement() {
     setSaving(true);
     try {
       const fd = new FormData();
-      ['name', 'description', 'price', 'discount_price', 'stock', 'sku', 'category_id'].forEach(k => fd.append(k, form[k]));
+      ['name', 'description', 'price', 'discount_price', 'stock', 'sku', 'category_id', 'gtin', 'brand', 'publish_date'].forEach(k => fd.append(k, form[k]));
       fd.append('is_featured', form.is_featured);
       fd.append('is_active', form.is_active);
+      fd.append('synced_to_meta', form.synced_to_meta);
       fd.append('tags', JSON.stringify(form.tags.split(',').map(t => t.trim()).filter(Boolean)));
       fd.append('specifications', JSON.stringify(form.specifications));
       fd.append('existingImages', JSON.stringify(form.existingImages));
@@ -83,7 +103,8 @@ export default function ProductManagement() {
 
   return (
     <div className="admin-page">
-      <AdminPageHeader title="Products" subtitle={`${total} products total`} action={<button className="btn btn-primary" onClick={openCreate}><FiPlus /> Add Product</button>} />
+      <AdminPageHeader title="Products" subtitle={`${total} products total`}
+        action={<button className="btn btn-primary" onClick={openCreate}><FiPlus /> Add Product</button>} />
 
       <div className="admin-toolbar glass">
         <div style={{ position: 'relative', flex: 1 }}>
@@ -94,21 +115,36 @@ export default function ProductManagement() {
 
       <div className="admin-table-wrap glass">
         <table className="admin-table">
-          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr>
+            <th>Product</th><th>SKU</th><th>GTIN / UPC</th>
+            <th>Stock</th><th>Price</th>
+            <th>Categories</th><th>Tags</th>
+            <th><FiStar size={12} /> Featured</th><th>Date</th>
+            <th>Meta Sync</th><th>Brand</th><th>Actions</th>
+          </tr></thead>
           <tbody>
-            {loading ? [...Array(5)].map((_, i) => <tr key={i}><td colSpan={6}><div className="skeleton" style={{ height: 48, margin: '4px 0' }} /></td></tr>)
+            {loading ? [...Array(5)].map((_, i) => <tr key={i}><td colSpan={12}><div className="skeleton" style={{ height: 48, margin: '4px 0' }} /></td></tr>)
               : products.map(p => (
                 <tr key={p.id}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div className="admin-table__thumb">{Array.isArray(p.images) && p.images[0] ? <img src={p.images[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span>🤖</span>}</div>
-                      <div><div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{p.name}</div><div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>SKU: {p.sku || '—'}</div></div>
+                      <div><div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{p.name}</div><div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{p.is_active ? '● Active' : '○ Hidden'}</div></div>
                     </div>
                   </td>
-                  <td><span className="badge badge-blue" style={{ fontSize: '0.75rem' }}>{p.category_name || '—'}</span></td>
-                  <td><div style={{ fontWeight: 700 }}>₹{parseFloat(p.price).toLocaleString('en-IN')}</div>{p.discount_price && <div style={{ fontSize: '0.75rem', color: 'var(--neon-green)' }}>₹{parseFloat(p.discount_price).toLocaleString('en-IN')} sale</div>}</td>
+                  <td><span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{p.sku || '—'}</span></td>
+                  <td><span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{p.gtin || '—'}</span></td>
                   <td><span className={`badge ${p.stock === 0 ? 'badge-pink' : p.stock < 10 ? 'badge-yellow' : 'badge-green'}`}>{p.stock}</span></td>
-                  <td><span className={`badge ${p.is_active ? 'badge-green' : 'badge-muted'}`}>{p.is_active ? 'Active' : 'Hidden'}</span></td>
+                  <td>
+                    <div style={{ fontWeight: 700 }}>₹{parseFloat(p.price).toLocaleString('en-IN')}</div>
+                    {p.discount_price && <div style={{ fontSize: '0.75rem', color: 'var(--neon-green)' }}>₹{parseFloat(p.discount_price).toLocaleString('en-IN')} sale</div>}
+                  </td>
+                  <td><span className="badge badge-blue" style={{ fontSize: '0.75rem' }}>{p.category_name || '—'}</span></td>
+                  <td><div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', maxWidth: 120 }}>{Array.isArray(p.tags) ? p.tags.slice(0, 2).map(t => <span key={t} className="badge badge-muted" style={{ fontSize: '0.68rem' }}>{t}</span>) : '—'}</div></td>
+                  <td><span className={`badge ${p.is_featured ? 'badge-yellow' : 'badge-muted'}`}>{p.is_featured ? '★' : '☆'}</span></td>
+                  <td><span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN') : '—'}</span></td>
+                  <td><span className={`badge ${p.synced_to_meta ? 'badge-purple' : 'badge-muted'}`}>{p.synced_to_meta ? 'Synced' : 'No'}</span></td>
+                  <td><span style={{ fontSize: '0.8rem' }}>{p.brand || '—'}</span></td>
                   <td>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button className="btn btn-ghost btn-sm" onClick={() => openEdit(p)}><FiEdit2 size={14} /></button>
@@ -138,6 +174,7 @@ export default function ProductManagement() {
               <button className="admin-modal__close" onClick={closeModal}><FiX /></button>
             </div>
             <div className="admin-modal__body">
+
               {/* Images */}
               <div className="form-group">
                 <label className="form-label"><FiImage size={13} /> Product Images</label>
@@ -157,24 +194,44 @@ export default function ProductManagement() {
                 </div>
               </div>
 
+              {/* Section: Basic Info */}
+              <div className="pm-section-label">📋 Basic Information</div>
               <div className="admin-modal__grid2">
                 <div className="form-group"><label className="form-label">Product Name *</label><input className="form-input" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Brand</label><input className="form-input" value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} placeholder="e.g. HalfRobo, Arduino, RaspPi" /></div>
+              </div>
+              <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} style={{ resize: 'vertical' }} /></div>
+
+              {/* Section: Pricing & Inventory */}
+              <div className="pm-section-label">💰 Pricing & Inventory</div>
+              <div className="admin-modal__grid3">
+                <div className="form-group"><label className="form-label">Price (₹) *</label><input className="form-input" type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Discount Price (₹)</label><input className="form-input" type="number" value={form.discount_price} onChange={e => setForm({ ...form, discount_price: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Stock</label><input className="form-input" type="number" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} /></div>
+              </div>
+
+              {/* Section: Identification */}
+              <div className="pm-section-label">🏷️ Product Identification</div>
+              <div className="admin-modal__grid3">
+                <div className="form-group"><label className="form-label">SKU</label><input className="form-input" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} placeholder="HR-001" /></div>
+                <div className="form-group"><label className="form-label">GTIN / UPC / EAN / ISBN</label><input className="form-input" value={form.gtin} onChange={e => setForm({ ...form, gtin: e.target.value })} placeholder="12-digit barcode" /></div>
+                <div className="form-group"><label className="form-label">Publish Date</label><input className="form-input" type="date" value={form.publish_date} onChange={e => setForm({ ...form, publish_date: e.target.value })} /></div>
+              </div>
+
+              {/* Section: Categorization */}
+              <div className="pm-section-label">🗂️ Categorization</div>
+              <div className="admin-modal__grid2">
                 <div className="form-group"><label className="form-label">Category</label>
                   <select className="form-select" value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })}>
                     <option value="">Select Category</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-                <div className="form-group"><label className="form-label">Price (₹) *</label><input className="form-input" type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
-                <div className="form-group"><label className="form-label">Discount Price (₹)</label><input className="form-input" type="number" value={form.discount_price} onChange={e => setForm({ ...form, discount_price: e.target.value })} /></div>
-                <div className="form-group"><label className="form-label">Stock</label><input className="form-input" type="number" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} /></div>
-                <div className="form-group"><label className="form-label">SKU</label><input className="form-input" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Tags (comma separated)</label><input className="form-input" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} placeholder="robot, AI, autonomous" /></div>
               </div>
-              <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} style={{ resize: 'vertical' }} /></div>
-              <div className="form-group"><label className="form-label">Tags (comma separated)</label><input className="form-input" value={form.tags} onChange={e => setForm({ ...form, tags: e.target.value })} placeholder="robot, AI, autonomous" /></div>
 
               {/* Specifications */}
+              <div className="pm-section-label">⚙️ Specifications</div>
               <div className="form-group">
-                <label className="form-label">Specifications</label>
                 <div className="pm-specs">
                   {Object.entries(form.specifications).map(([k, v]) => (
                     <div key={k} className="pm-spec-row">
@@ -190,9 +247,12 @@ export default function ProductManagement() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: 20 }}>
-                <label style={{ display: 'flex', gap: 8, alignItems: 'center', cursor: 'pointer', fontSize: '0.9rem' }}><input type="checkbox" checked={form.is_featured} onChange={e => setForm({ ...form, is_featured: e.target.checked })} style={{ accentColor: 'var(--neon-blue)' }} /> Featured Product</label>
-                <label style={{ display: 'flex', gap: 8, alignItems: 'center', cursor: 'pointer', fontSize: '0.9rem' }}><input type="checkbox" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} style={{ accentColor: 'var(--neon-blue)' }} /> Active (Visible)</label>
+              {/* Toggles */}
+              <div className="pm-section-label">🔧 Settings</div>
+              <div className="pm-toggles">
+                <label className="pm-toggle-label"><input type="checkbox" checked={form.is_featured} onChange={e => setForm({ ...form, is_featured: e.target.checked })} style={{ accentColor: 'var(--neon-blue)' }} /> ★ Featured Product</label>
+                <label className="pm-toggle-label"><input type="checkbox" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} style={{ accentColor: 'var(--neon-blue)' }} /> ● Active (Visible)</label>
+                <label className="pm-toggle-label"><input type="checkbox" checked={form.synced_to_meta} onChange={e => setForm({ ...form, synced_to_meta: e.target.checked })} style={{ accentColor: '#9B59B6' }} /> 🔗 Synced to Meta Catalog</label>
               </div>
             </div>
             <div className="admin-modal__footer">

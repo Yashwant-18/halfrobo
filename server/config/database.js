@@ -60,6 +60,10 @@ export async function initializeDatabase() {
         images JSONB DEFAULT '[]',
         stock INTEGER DEFAULT 0,
         sku VARCHAR(100) UNIQUE,
+        gtin VARCHAR(100),
+        brand VARCHAR(255),
+        synced_to_meta BOOLEAN DEFAULT false,
+        publish_date DATE,
         tags JSONB DEFAULT '[]',
         is_featured BOOLEAN DEFAULT false,
         is_active BOOLEAN DEFAULT true,
@@ -68,6 +72,22 @@ export async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
+
+      -- Add new product columns if they don't exist (for existing DBs)
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='gtin') THEN
+          ALTER TABLE products ADD COLUMN gtin VARCHAR(100);
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='brand') THEN
+          ALTER TABLE products ADD COLUMN brand VARCHAR(255);
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='synced_to_meta') THEN
+          ALTER TABLE products ADD COLUMN synced_to_meta BOOLEAN DEFAULT false;
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='publish_date') THEN
+          ALTER TABLE products ADD COLUMN publish_date DATE;
+        END IF;
+      END $$;
 
       CREATE TABLE IF NOT EXISTS cart_items (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -157,6 +177,27 @@ export async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS site_settings (
         key VARCHAR(100) PRIMARY KEY,
         value TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS print_orders (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        file_name VARCHAR(500) NOT NULL,
+        file_url TEXT NOT NULL,
+        file_size BIGINT,
+        material VARCHAR(100) DEFAULT 'PLA',
+        color VARCHAR(100) DEFAULT 'White',
+        quality VARCHAR(100) DEFAULT 'Standard (0.2mm)',
+        infill VARCHAR(50) DEFAULT '20%',
+        quantity INTEGER DEFAULT 1,
+        supports BOOLEAN DEFAULT false,
+        special_instructions TEXT,
+        phone VARCHAR(30),
+        status VARCHAR(50) DEFAULT 'pending',
+        admin_note TEXT,
+        price_estimate DECIMAL(10,2),
+        created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
     `);

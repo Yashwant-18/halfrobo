@@ -31,6 +31,8 @@ import InventoryPage from './pages/admin/InventoryPage';
 import AnalyticsPage from './pages/admin/AnalyticsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import AdminProjectsPage from './pages/admin/AdminProjectsPage';
+import Admin3DPrintPage from './pages/admin/Admin3DPrintPage';
+import PrintOrderPage from './pages/user/PrintOrderPage';
 
 export default function App() {
   return (
@@ -67,6 +69,7 @@ export default function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/3d-print" element={<PrintOrderPage />} />
             </Route>
 
             {/* Auth Pages (no layout) */}
@@ -83,6 +86,7 @@ export default function App() {
               <Route path="categories" element={<CategoryManagement />} />
               <Route path="reviews" element={<ReviewManagement />} />
               <Route path="projects" element={<AdminProjectsPage />} />
+              <Route path="3dprint" element={<Admin3DPrintPage />} />
               <Route path="inventory" element={<InventoryPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="settings" element={<SettingsPage />} />
