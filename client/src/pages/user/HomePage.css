@@ -570,31 +570,50 @@
   text-transform: uppercase;
   margin-bottom: 28px;
 }
+
+/* Viewport: clips overflow + adds fade edges */
+.partners-viewport {
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+/* Track: the element that actually animates */
 .partners-track {
   display: flex;
-  gap: 12px;
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  gap: 14px;
+  width: max-content;
+  animation: partners-scroll 28s linear infinite;
 }
-.partners-track { animation: partners-scroll 20s linear infinite; }
+.partners-track:hover { animation-play-state: paused; }
+
 .partner-item {
   flex-shrink: 0;
   padding: 12px 28px;
   border-radius: 100px !important;
   background: rgba(255,255,255,0.03) !important;
-  border: 1px solid rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
   font-size: 0.82rem;
   font-weight: 700;
   color: rgba(255,255,255,0.35);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: all 0.2s ease;
   white-space: nowrap;
+  transition: all 0.25s ease;
+  user-select: none;
+  cursor: default;
 }
-.partner-item:hover { color: var(--neon-blue); border-color: rgba(0,217,255,0.2) !important; }
+.partner-item:hover {
+  color: var(--neon-blue);
+  border-color: rgba(0,217,255,0.25) !important;
+  background: rgba(0,217,255,0.05) !important;
+  transform: translateY(-2px);
+}
+
 @keyframes partners-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* ═══════════════════════════════════════════════════════════

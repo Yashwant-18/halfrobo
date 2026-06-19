@@ -277,12 +277,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── PARTNERS ────────────────────────── */}
+      {/* ─── PARTNERS ────────────────── */}
       <section className="section home__partners">
         <div className="container">
           <motion.p className="home__partners-label text-muted text-center" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
             Trusted Technology Partners
           </motion.p>
+        </div>
+        {/* Full-width scrolling strip — outside container so it bleeds edge-to-edge */}
+        <div className="partners-viewport">
           <div className="partners-track">
             {[...partners, ...partners].map((p, i) => (
               <div key={i} className="partner-item glass">{p}</div>
