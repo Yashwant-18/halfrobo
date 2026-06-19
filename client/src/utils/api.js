@@ -9,7 +9,7 @@ const isProduction = import.meta.env.PROD;
 const api = axios.create({
   baseURL: isProduction ? `${RENDER_URL}/api` : '/api',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30000,
+  timeout: 60000, // 60s — handles Render free-tier cold starts (~50s)
 });
 
 api.interceptors.request.use(

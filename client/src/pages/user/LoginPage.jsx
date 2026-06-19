@@ -17,13 +17,19 @@ export default function LoginPage() {
     e.preventDefault();
     if (!form.email || !form.password) return toast.error('Please fill all fields');
     setLoading(true);
+    const slowTimer = setTimeout(() =>
+      toast('Server is waking up, please wait...', { icon: '⏳', duration: 10000, id: 'slow-toast' })
+    , 5000); // show hint if takes > 5s (Render cold start)
     try {
       const user = await login(form.email, form.password);
+      toast.dismiss('slow-toast');
       toast.success(`Welcome back, ${user.name.split(' ')[0]}! 👋`);
       navigate(user.role === 'admin' ? '/admin' : '/');
     } catch (err) {
+      toast.dismiss('slow-toast');
       toast.error(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {
+      clearTimeout(slowTimer);
       setLoading(false);
     }
   };
@@ -41,7 +47,7 @@ export default function LoginPage() {
         <motion.div className="auth-brand" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
           <Link to="/" className="auth-brand__logo">
             <span className="auth-brand__logo-icon">⬡</span>
-            <span className="auth-brand__logo-text">Half<span className="text-gradient">Robo</span></span>
+            <span className="auth-brand__logo-text">HALF<span className="text-gradient">ROBO</span></span>
           </Link>
           <div className="auth-brand__robot animate-float">🤖</div>
           <h2 className="auth-brand__title">Welcome to the Future</h2>
@@ -91,8 +97,11 @@ export default function LoginPage() {
           </div>
 
           <div className="auth-card__demo">
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 8 }}>Demo credentials:</p>
-            <code style={{ fontSize: '0.78rem', color: 'var(--neon-blue)' }}>demo@halfrobo.com / demo123</code>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 6 }}>Demo credentials:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <code style={{ fontSize: '0.76rem', color: 'var(--neon-blue)' }}>demo@halfrobo.com / demo123</code>
+              <code style={{ fontSize: '0.76rem', color: 'var(--neon-purple)' }}>admin@halfrobo.com / admin123</code>
+            </div>
           </div>
         </motion.div>
       </div>

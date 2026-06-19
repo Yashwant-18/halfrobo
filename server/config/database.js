@@ -231,7 +231,106 @@ export async function initializeDatabase() {
       );
     }
 
-    console.log('✅ PostgreSQL database initialized');
+    console.log('✅ PostgreSQL tables ready');
+
+    // ── Auto-seed: users ──────────────────────────────────────
+    // bcrypt hash of 'admin123'  (cost 10)
+    const adminHash = '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // = 'password' placeholder
+    // We'll hash properly using bcrypt
+    const bcrypt = await import('bcryptjs');
+    const adminPasswordHash = await bcrypt.default.hash('admin123', 10);
+    const demoPasswordHash  = await bcrypt.default.hash('demo123',  10);
+
+    await client.query(`
+      INSERT INTO users (name, email, password, role)
+      VALUES
+        ('Admin', 'admin@halfrobo.com', $1, 'admin'),
+        ('Demo User', 'demo@halfrobo.com', $2, 'user')
+      ON CONFLICT (email) DO NOTHING
+    `, [adminPasswordHash, demoPasswordHash]);
+
+    // ── Auto-seed: categories ─────────────────────────────────
+    await client.query(`
+      INSERT INTO categories (name, slug, description) VALUES
+        ('AI Robots',          'ai-robots',           'Autonomous AI-powered robots'),
+        ('Drones & UAV',       'drones-uav',          'Consumer and professional drones'),
+        ('Smart Home',         'smart-home',          'IoT devices for smart homes'),
+        ('Security Systems',   'security-systems',    'AI-powered surveillance and security'),
+        ('Industrial Robotics','industrial-robotics',  'Heavy-duty automation systems'),
+        ('IoT Sensors',        'iot-sensors',         'Sensors and microcontrollers')
+      ON CONFLICT (slug) DO NOTHING
+    `);
+
+    // ── Auto-seed: sample products ────────────────────────────
+    const catRes = await client.query(`SELECT id, slug FROM categories LIMIT 6`);
+    const catMap = Object.fromEntries(catRes.rows.map(r => [r.slug, r.id]));
+
+    const sampleProducts = [
+      {
+        name: 'NeuroBot X1', slug: 'neurobot-x1',
+        desc: 'Next-gen autonomous AI robot with real-time obstacle avoidance, voice commands and emotion recognition.',
+        price: 89999, discount_price: 74999, stock: 15,
+        sku: 'NB-X1-001', is_featured: true, category: 'ai-robots',
+        images: JSON.stringify(['/uploads/neurobot.jpg']),
+        tags: JSON.stringify(['ai', 'robot', 'autonomous']),
+      },
+      {
+        name: 'SkyForce Drone Pro', slug: 'skyforce-drone-pro',
+        desc: '4K gimbal drone with 40-min flight time, GPS auto-return, and obstacle sensing.',
+        price: 54999, discount_price: 44999, stock: 28,
+        sku: 'SF-DP-002', is_featured: true, category: 'drones-uav',
+        images: JSON.stringify(['/uploads/drone.jpg']),
+        tags: JSON.stringify(['drone', '4k', 'gps']),
+      },
+      {
+        name: 'SmartHub 360', slug: 'smarthub-360',
+        desc: 'Central IoT hub connecting up to 128 smart devices. Works with Alexa, Google Home.',
+        price: 12999, discount_price: 9999, stock: 50,
+        sku: 'SH-360-003', is_featured: true, category: 'smart-home',
+        images: JSON.stringify(['/uploads/smarthub.jpg']),
+        tags: JSON.stringify(['iot', 'smart home', 'hub']),
+      },
+      {
+        name: 'Arduino Mega 2560', slug: 'arduino-mega-2560',
+        desc: 'The classic microcontroller board for robotics and IoT projects.',
+        price: 1499, discount_price: null, stock: 120,
+        sku: 'AR-M2560-004', is_featured: false, category: 'iot-sensors',
+        images: JSON.stringify([]),
+        tags: JSON.stringify(['arduino', 'microcontroller']),
+      },
+      {
+        name: 'Vision Guard AI Camera', slug: 'vision-guard-ai-camera',
+        desc: 'AI-powered 4MP security camera with face recognition and night vision.',
+        price: 8999, discount_price: 6999, stock: 35,
+        sku: 'VG-CAM-005', is_featured: true, category: 'security-systems',
+        images: JSON.stringify([]),
+        tags: JSON.stringify(['security', 'ai', 'camera']),
+      },
+      {
+        name: 'RoboArm Industrial 6-Axis', slug: 'roboarm-industrial-6axis',
+        desc: '6-axis industrial robotic arm with 5kg payload, programmable via ROS.',
+        price: 249999, discount_price: 199999, stock: 5,
+        sku: 'RA-IND-006', is_featured: false, category: 'industrial-robotics',
+        images: JSON.stringify([]),
+        tags: JSON.stringify(['industrial', 'arm', 'ros']),
+      },
+    ];
+
+    for (const p of sampleProducts) {
+      const catId = catMap[p.category] || null;
+      await client.query(`
+        INSERT INTO products
+          (name, slug, description, price, discount_price, stock, sku,
+           is_featured, is_active, category_id, images, tags)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9,$10,$11)
+        ON CONFLICT (slug) DO NOTHING
+      `, [
+        p.name, p.slug, p.desc, p.price, p.discount_price ?? null,
+        p.stock, p.sku, p.is_featured, catId, p.images, p.tags,
+      ]);
+    }
+
+    console.log('✅ Seed data ready (admin + demo users, categories, products)');
   } finally {
     client.release();
   }
