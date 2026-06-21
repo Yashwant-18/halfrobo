@@ -386,41 +386,60 @@
 .footer__cta-ghost:hover { background: rgba(0,217,255,0.08); border-color: rgba(0,217,255,0.5); }
 
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE — TABLET (max 1200px)
+   RESPONSIVE — TABLET (max 1100px)
 ════════════════════════════════════════════════════════════ */
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
   .footer__top {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 32px;
     padding: 56px 0 40px;
   }
-  .footer__brand    { grid-column: 1 / -1; }
-  .footer__newsletter { grid-column: span 2; max-width: 480px; }
+  /* Brand spans full width */
+  .footer__brand      { grid-column: 1 / -1; }
+  /* Newsletter spans full width below cols */
+  .footer__newsletter { grid-column: 1 / -1; max-width: 480px; }
+
   .footer__stats    { grid-template-columns: repeat(4, 1fr); }
-  .footer__services { grid-template-columns: 1fr 1fr; }
+  .footer__services { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE (max 768px)
 ════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+  /* Top grid: brand full row, 3 cols side-by-side in 3 columns, newsletter full row */
   .footer__top {
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    padding: 44px 0 32px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 16px;
+    padding: 40px 0 28px;
   }
-  .footer__brand      { grid-column: 1 / -1; }
-  .footer__newsletter { grid-column: 1 / -1; max-width: 100%; }
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+  /* The 3 link columns stay inline — each takes 1 column */
+  .footer__col {
+    grid-column: auto;
+  }
+  .footer__newsletter {
+    grid-column: 1 / -1;
+    max-width: 100%;
+  }
 
+  /* Smaller text in columns */
+  .footer__col-title  { font-size: 0.72rem; margin-bottom: 12px; }
+  .footer__link       { font-size: 0.8rem; }
+  .footer__col-links  { gap: 8px; }
+
+  /* Bottom bar stacks */
   .footer__bottom {
     flex-direction: column;
     gap: 6px;
     text-align: center;
-    padding: 18px 0;
+    padding: 16px 0;
   }
   .footer__made-with { text-align: center; }
 
-  /* Stats */
+  /* Stats — 2 per row */
   .footer__stats {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -429,8 +448,11 @@
   .footer__stat-value { font-size: 1.4rem; }
   .footer__stat-label { font-size: 0.72rem; }
 
-  /* Services */
-  .footer__services { grid-template-columns: 1fr; gap: 10px; }
+  /* Services — 1 col */
+  .footer__services {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
   .footer__service-card { padding: 14px; }
 
   /* CTA */
@@ -438,67 +460,78 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 20px;
-    gap: 16px;
+    gap: 14px;
   }
   .footer__cta-banner__text h3 { font-size: 1rem; }
-  .footer__cta-banner__actions { width: 100%; }
-  .footer__cta-banner__actions .btn { flex: 1; justify-content: center; }
+  .footer__cta-banner__actions {
+    width: 100%;
+    flex-direction: row;
+  }
+  .footer__cta-banner__actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
 
   /* Map */
-  .footer__map-section  { padding: 32px 0 28px; }
-  .footer__map-wrap     { height: 200px; }
-  .footer__map-header   { gap: 8px; }
-  .footer__map-title    { font-size: 0.76rem; }
-  .footer__map-badge    { font-size: 0.7rem; padding: 5px 12px; }
+  .footer__map-section { padding: 28px 0 24px; }
+  .footer__map-wrap    { height: 200px; }
+  .footer__map-badge   { font-size: 0.7rem; padding: 5px 12px; }
 
   /* Extra */
-  .footer__extra { padding: 32px 0 28px; gap: 24px; }
+  .footer__extra { padding: 28px 0 24px; gap: 22px; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE — SMALL PHONES (max 480px)
+   RESPONSIVE — SMALL PHONES (max 520px)
 ════════════════════════════════════════════════════════════ */
-@media (max-width: 480px) {
+@media (max-width: 520px) {
+  /* On very small screens, collapse to 2-col grid for link columns */
   .footer__top {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 36px 0 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    padding: 32px 0 22px;
   }
+  /* Brand and newsletter still full width */
+  .footer__brand      { grid-column: 1 / -1; }
+  .footer__newsletter { grid-column: 1 / -1; }
+  /* Third column wraps to next row alongside first — 2-col layout */
+  .footer__col { grid-column: auto; }
 
-  /* Collapse all cols to full width */
-  .footer__brand,
-  .footer__newsletter,
-  .footer__col { grid-column: 1 / -1; }
+  .footer__logo     { font-size: 0.95rem; letter-spacing: 0.08em; }
+  .footer__tagline  { font-size: 0.8rem; }
+  .footer__contact-item { font-size: 0.75rem; }
 
   .footer__stats {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
   .footer__stat-card  { padding: 14px 8px; border-radius: 12px; }
-  .footer__stat-value { font-size: 1.25rem; }
+  .footer__stat-value { font-size: 1.2rem; }
   .footer__stat-icon  { width: 36px; height: 36px; }
 
-  .footer__services   { grid-template-columns: 1fr; }
-
-  .footer__logo       { font-size: 0.95rem; letter-spacing: 0.08em; }
-  .footer__tagline    { font-size: 0.82rem; }
-
-  .footer__map-wrap   { height: 180px; border-radius: 14px; }
-  .footer__cta-banner { border-radius: 16px; }
+  .footer__map-wrap   { height: 175px; border-radius: 14px; }
+  .footer__cta-banner { border-radius: 14px; }
   .footer__cta-banner__content { padding: 16px; }
-  .footer__cta-banner__text h3 { font-size: 0.95rem; }
+  .footer__cta-banner__actions { flex-direction: column; }
+  .footer__cta-banner__actions .btn { width: 100%; }
 
-  .footer__bottom { padding: 14px 0; }
   .footer__copyright,
-  .footer__made-with  { font-size: 0.72rem; }
+  .footer__made-with { font-size: 0.72rem; }
 }
 
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE — TINY (max 360px)
 ════════════════════════════════════════════════════════════ */
 @media (max-width: 360px) {
-  .footer__stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .footer__top {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .footer__col-title  { font-size: 0.68rem; }
+  .footer__link       { font-size: 0.75rem; }
+  .footer__stats      { gap: 8px; }
   .footer__stat-value { font-size: 1.1rem; }
-  .footer__stat-label { font-size: 0.68rem; }
-  .footer__social { width: 32px; height: 32px; }
+  .footer__stat-label { font-size: 0.65rem; }
+  .footer__social     { width: 30px; height: 30px; }
 }
+
