@@ -331,9 +331,18 @@
 /* ─── RESPONSIVE ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .navbar__links { display: none; }
-  .navbar__auth { display: none; }
+  .navbar__auth  { display: none; }
   .navbar__hamburger { display: flex; }
 }
 @media (max-width: 480px) {
   .navbar__user-name { display: none; }
+  .navbar__logo-text { font-size: 1rem; letter-spacing: 0.08em; }
+  .navbar__logo-icon { font-size: 1.3rem; }
+  .navbar { padding: 12px 0; }
+  .navbar--scrolled { padding: 8px 0; }
+}
+@media (max-width: 360px) {
+  .navbar__logo-text { font-size: 0.9rem; letter-spacing: 0.06em; }
+  .navbar__cart-btn { width: 36px; height: 36px; }
+  .navbar__hamburger { width: 36px; height: 36px; }
 }
