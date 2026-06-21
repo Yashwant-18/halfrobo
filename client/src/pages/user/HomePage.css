@@ -94,7 +94,7 @@
 
 /* Title */
 .hero__title {
-  font-size: clamp(3.2rem, 7vw, 6rem) !important;
+  font-size: clamp(2.4rem, 7vw, 6rem) !important;
   line-height: 1.0 !important;
   letter-spacing: -0.03em !important;
 }
@@ -118,6 +118,12 @@
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
+}
+/* Make sure all hero buttons have consistent sizing */
+.hero__actions .btn {
+  min-height: 50px;
+  padding: 13px 28px;
+  font-size: 0.97rem;
 }
 .hero__cta-primary {
   background: linear-gradient(135deg, #00D9FF 0%, #7B61FF 100%) !important;
@@ -722,11 +728,55 @@
   .home__products-loading { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
-  .categories-grid { grid-template-columns: 1fr; }
+  .categories-grid { grid-template-columns: 1fr 1fr; }
   .features-grid { grid-template-columns: 1fr; }
   .testimonials-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .hero__title { font-size: 2.8rem !important; }
-  .hero__actions { flex-direction: column; }
-  .hero__actions .btn { width: 100%; justify-content: center; }
+
+  /* Hero title scales down */
+  .hero__title { font-size: clamp(2rem, 9vw, 2.8rem) !important; }
+  .hero__subtitle { font-size: 0.95rem; }
+
+  /* Hero buttons: stack vertically, full width */
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+  .hero__actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 20px;
+    font-size: 0.95rem;
+  }
+
+  /* CTA section buttons */
+  .home__cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 360px;
+    gap: 10px;
+  }
+  .home__cta-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  /* Hero meta row */
+  .hero__meta { gap: 16px; }
+  .hero__meta-num { font-size: 1rem; }
+
+  /* CTA banner padding */
+  .home__cta-banner { padding: 60px 0; }
+}
+
+@media (max-width: 420px) {
+  .categories-grid { grid-template-columns: 1fr; }
+  .hero__title { font-size: clamp(1.8rem, 10vw, 2.4rem) !important; }
+  .hero__tag { font-size: 0.7rem; padding: 6px 14px; }
+  .hero__actions .btn { min-height: 46px; font-size: 0.9rem; }
 }
